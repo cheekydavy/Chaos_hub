@@ -1,20 +1,25 @@
+import os
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-import os
 import uuid
 from datetime import datetime, timezone
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-fuckin-key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chaos_hub.db'
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-fuckin-key')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///chaos_hub.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Silence warnings
+app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
 
 db = SQLAlchemy(app)
 
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+# Ensure upload folder exists
+upload_folder = app.config['UPLOAD_FOLDER']
+if not os.path.exists(upload_folder):
+    os.makedirs(upload_folder)
+
+# Rest of your code (models, routes) stays the same...
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)

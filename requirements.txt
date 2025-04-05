@@ -1,10 +1,17 @@
 # Core Flask dependencies
-Flask==3.0.3  # Latest stable Flask (as of Apr 2025)
-Werkzeug==3.0.4  # WSGI toolkit (Flask dependency)
-Jinja2==3.1.4  # Templating engine (Flask dependency)
-MarkupSafe==2.1.5  # Safe string handling (Jinja2 dependency)
-itsdangerous==2.2.0  # Signing utilities (Flask dependency)
-click==8.1.7  # CLI tools (Flask dependency)
+Flask==3.0.3
+Werkzeug==3.0.4  # Includes security (hashing) and utils (secure_filename)
+Jinja2==3.1.4
+MarkupSafe==2.1.5
+itsdangerous==2.2.0
+click==8.1.7
+
+# Database support
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy==2.0.35
+
+# For Render's PostgreSQL (replaces SQLite in production)
+psycopg2-binary==2.9.10  # PostgreSQL adapter
 
 # Production server for Render
-gunicorn==23.0.0  # WSGI server for Render deployment
+gunicorn==23.0.0
