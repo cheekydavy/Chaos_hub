@@ -1,0 +1,544 @@
+:root {
+    /* Dark Theme (Default) */
+    --bg-color: #1E1E1E;
+    --text-color: #E0E0E0;
+    --header-color: #00D4FF;
+    --link-color: #00FF7F;
+    --link-hover-color: #00D4FF;
+    --secondary-bg: #2A2A2A;
+    --tertiary-bg: #3A3A3A;
+    --subtext-color: #A0A0A0;
+    --button-bg: #00FF7F;
+    --button-text: #000;
+    --button-hover: #00D4FF;
+    --error-color: #FF4444;
+}
+
+body:not(.dark-theme) {
+    /* Light Theme */
+    --bg-color: #F5F5F5;
+    --text-color: #333333;
+    --header-color: #007BFF;
+    --link-color: #28A745;
+    --link-hover-color: #007BFF;
+    --secondary-bg: #E9ECEF;
+    --tertiary-bg: #DEE2E6;
+    --subtext-color: #6C757D;
+    --button-bg: #28A745;
+    --button-text: #FFF;
+    --button-hover: #007BFF;
+    --error-color: #DC3545;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    transition: background 0.3s, color 0.3s;
+}
+
+h1, h2, h3 {
+    color: var(--header-color);
+    font-weight: 400;
+    margin: 0 0 15px;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: var(--link-hover-color);
+}
+
+p {
+    margin: 10px 0;
+}
+
+/* Navbar */
+.navbar {
+    background: var(--secondary-bg);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-brand h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.tagline {
+    font-size: 14px;
+    color: var(--subtext-color);
+    display: block;
+}
+
+.nav-toggle {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 24px;
+    cursor: pointer;
+    display: none;
+}
+
+.nav-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.nav-menu li {
+    margin-left: 20px;
+}
+
+.nav-link {
+    font-size: 16px;
+    padding: 5px 10px;
+}
+
+.theme-switcher {
+    background: var(--tertiary-bg);
+    border: none;
+    color: var(--text-color);
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.theme-switcher:hover {
+    background: var(--button-hover);
+}
+
+/* Container */
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 20px auto;
+    gap: 20px;
+    padding: 0 20px;
+}
+
+/* Sidebar */
+.sidebar {
+    flex: 1;
+    min-width: 250px;
+}
+
+.quick-links, .timetable-doc {
+    background: var(--secondary-bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.quick-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.quick-links li {
+    margin: 10px 0;
+}
+
+.doc-upload p {
+    margin: 5px 0;
+}
+
+.upload-date {
+    font-size: 12px;
+    color: var(--subtext-color);
+}
+
+.doc-link {
+    font-weight: bold;
+    word-wrap: break-word; /* Wrap long filenames */
+    max-width: 100%;
+    display: inline-block;
+}
+
+/* Main Content */
+.main-content {
+    flex: 3;
+}
+
+.dashboard-header {
+    background: var(--secondary-bg);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.chaos-meter h2 {
+    font-size: 20px;
+}
+
+.meter-bar {
+    background: var(--tertiary-bg);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.meter-fill {
+    height: 100%;
+    transition: width 0.5s;
+}
+
+.daily-battle-cry {
+    font-style: italic;
+    color: var(--subtext-color);
+}
+
+.close-group-btn {
+    background: var(--error-color);
+    border: none;
+    padding: 10px;
+    color: #FFF;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.close-group-btn:hover {
+    background: #CC3333;
+}
+
+/* Members Section */
+.members-section {
+    background: var(--secondary-bg);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.member-dropdown {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--tertiary-bg);
+    border-radius: 5px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.member-dropdown option {
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Notes Vault */
+.notes-vault {
+    background: var(--secondary-bg);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.notes-search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#notes-search {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--tertiary-bg);
+    border-radius: 5px;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.search-btn {
+    background: var(--button-bg);
+    border: none;
+    padding: 10px 15px;
+    color: var(--button-text);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.search-btn:hover {
+    background: var(--button-hover);
+}
+
+.units-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.unit {
+    background: var(--tertiary-bg);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.unit-materials {
+    margin-top: 10px;
+}
+
+.material-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.grab-link {
+    font-size: 14px;
+    padding: 5px 10px;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border-radius: 5px;
+}
+
+.grab-link:hover {
+    background: var(--button-hover);
+}
+
+.upload-form {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.upload-form input[type="file"] {
+    padding: 5px;
+    color: var(--text-color);
+}
+
+.upload-btn {
+    background: var(--button-bg);
+    border: none;
+    padding: 10px;
+    color: var(--button-text);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.upload-btn:hover {
+    background: var(--button-hover);
+}
+
+.timetable-upload {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Assignment Tracker */
+.assignment-tracker {
+    background: var(--secondary-bg);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.assignment-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.assignment-item {
+    background: var(--tertiary-bg);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.days-left {
+    font-size: 12px;
+    color: var(--error-color);
+}
+
+.posted-date {
+    font-size: 12px;
+    color: var(--subtext-color);
+    display: block;
+    margin-top: 5px;
+}
+
+.assignment-form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.assignment-form input[type="text"] {
+    padding: 10px;
+    border: 1px solid var(--tertiary-bg);
+    border-radius: 5px;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.assignment-form input[name="assignment_topic"] {
+    font-size: 18px;
+    color: var(--header-color);
+    font-weight: 400;
+}
+
+.assignment-form input[name="assignment_remark"] {
+    font-size: 12px;
+    color: var(--error-color);
+}
+
+.assignment-form input[name="task-date"] {
+    padding-right: 30px; /* Space for calendar icon */
+}
+
+/* Calendar Icon for Date Input */
+.assignment-form::after {
+    content: '📅';
+    position: absolute;
+    right: 10px;
+    top: 70%; /* Adjust based on your form layout */
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--subtext-color);
+}
+
+/* Buttons in Assignment Items */
+.defuse-btn, .remove-btn {
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 5px 10px;
+    margin: 5px 5px 0 0;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.defuse-btn:hover, .remove-btn:hover {
+    background: var(--button-hover);
+}
+
+/* Notice Board */
+.notice-board {
+    flex: 1;
+    min-width: 250px;
+    background: var(--secondary-bg);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.notice-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.notice-item {
+    background: var(--tertiary-bg);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.notice-stamp {
+    font-size: 12px;
+    color: var(--subtext-color);
+    display: block;
+    margin-top: 5px;
+}
+
+.notice-form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notice-form input[type="text"] {
+    padding: 10px;
+    border: 1px solid var(--tertiary-bg);
+    border-radius: 5px;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.notice-form input[name="notice_topic"] {
+    font-size: 18px;
+    color: var(--header-color);
+    font-weight: 400;
+}
+
+.notice-form input[name="notice_remark"] {
+    font-size: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .nav-menu li {
+        margin: 10px 0;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar, .main-content, .notice-board {
+        width: 100%;
+    }
+
+    .units-container {
+        grid-template-columns: 1fr;
+    }
+
+    .assignment-list {
+        grid-template-columns: 1fr;
+    }
+}

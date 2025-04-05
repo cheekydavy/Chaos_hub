@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Setup - {{ group.group_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/group_setup.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ group.group_name }}</h1>
+        <div class="card">
+            <h2>Group Key</h2>
+            <p><strong>{{ group.group_key }}</strong></p>
+            <p>Share this with your crew.</p>
+        </div>
+        <h2>Add Units</h2>
+        <form method="POST" id="unit-form">
+            <div id="unit-inputs">
+                <input type="text" name="units[]" placeholder="Unit Name" required>
+            </div>
+            <button type="button" id="add-unit-btn">Add Another Unit</button>
+            <button type="submit">Finish Setup</button>
+        </form>
+        <p><a href="{{ url_for('index') }}">Back</a></p>
+    </div>
+    <script>
+        document.getElementById('add-unit-btn').addEventListener('click', () => {
+            const inputDiv = document.getElementById('unit-inputs');
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.name = 'units[]';
+            newInput.placeholder = 'Unit Name';
+            newInput.required = true;
+            inputDiv.appendChild(newInput);
+        });
+    </script>
+</body>
+</html>

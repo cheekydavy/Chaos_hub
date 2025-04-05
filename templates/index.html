@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS/24 Chaos Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1>CS/24 Chaos Hub</h1>
+            <span class="tagline">Code or Crash</span>
+        </div>
+        <button class="nav-toggle" aria-label="Toggle Navigation">☰</button>
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('index') }}" class="nav-link" data-section="home">Home</a></li>
+            <li><a href="#notes" class="nav-link" data-section="notes">Code Vault</a></li>
+            <li><a href="#assignments" class="nav-link" data-section="assignments">Deadlines</a></li>
+            <li><a href="#timetable" class="nav-link" data-section="timetable">Timetable</a></li>
+            <li><a href="#notices" class="nav-link" data-section="notices">Notices</a></li>
+            <li><a href="#links" class="nav-link" data-section="links">Quick Links</a></li>
+            <li><button class="theme-switcher" aria-label="Toggle Theme">🌓</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar (Quick Links + Timetable Doc) -->
+        <aside class="sidebar">
+            <section class="quick-links">
+                <h2>Escape Routes</h2>
+                <ul>
+                    <li><a href="{{ url_for('register') }}" class="create-group">Create Group</a></li>
+                    <li><a href="{{ url_for('join') }}" class="join-group">Join Group</a></li>
+                    <li><a href="https://uni-portal.com" target="_blank">Portal</a></li>
+                    <li><a href="https://library.uni.com" target="_blank">Library</a></li>
+                    <li><a href="https://email.uni.com" target="_blank">Email</a></li>
+                    <li><a href="https://support.uni.com" target="_blank">SOS Tech</a></li>
+                </ul>
+            </section>
+            <section class="timetable-doc">
+                <h2>Timetable Drop</h2>
+                <div class="doc-upload">
+                    {% if class_timetable %}
+                        <p>Class Schedule:</p>
+                        <a href="{{ url_for('uploaded_file', filename=class_timetable.filename) }}" class="doc-link">{{ class_timetable.filename }}</a>
+                        <p class="upload-date">Updated: {{ class_timetable.upload_date }}</p>
+                    {% else %}
+                        <p>No class timetable yet.</p>
+                    {% endif %}
+                    {% if exam_timetable %}
+                        <p>Exam Schedule:</p>
+                        <a href="{{ url_for('uploaded_file', filename=exam_timetable.filename) }}" class="doc-link">{{ exam_timetable.filename }}</a>
+                        <p class="upload-date">Updated: {{ exam_timetable.upload_date }}</p>
+                    {% else %}
+                        <p>No exam timetable yet.</p>
+                    {% endif %}
+                </div>
+            </section>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header with Chaos Meter -->
+            <header class="dashboard-header">
+                <div class="chaos-meter">
+                    {% set deadline_count = assignments|length %}
+                    {% set chaos_percent = (deadline_count * 20) if deadline_count <= 5 else 100 %}
+                    {% set chaos_color = '#00FF7F' if deadline_count <= 1 else '#FFFF00' if deadline_count == 2 else '#FFA500' if deadline_count == 4 else '#FF4444' %}
+                    {% set chaos_tag = 'Calm' if deadline_count <= 1 else 'Stirring' if deadline_count == 2 else 'Frenzy' if deadline_count == 4 else 'Chaos' %}
+                    <h2>Chaos Level: <span class="chaos-score" style="color: {{ chaos_color }}">{{ chaos_tag }}</span></h2>
+                    <div class="meter-bar">
+                        <div class="meter-fill" style="width: {{ chaos_percent }}%; background: {{ chaos_color }};"></div>
+                    </div>
+                </div>
+                {% if group %}
+                    <h2>{{ group.group_name }}</h2>
+                    {% if is_admin %}
+                        <form method="POST" action="{{ url_for('close_group') }}">
+                            <button type="submit" class="close-group-btn">Close Group</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+                <p class="daily-battle-cry">"Debug or die, you CS warrior."</p>
+            </header>
+
+            <!-- Members Dropdown -->
+            {% if group %}
+                <section class="members-section" id="members">
+                    <h2>Group Members ({{ members|length }})</h2>
+                    <select class="member-dropdown">
+                        <option value="" disabled selected>Select a member</option>
+                        {% for member in members %}
+                            <option value="{{ member.id }}">{{ member.username }}{% if member.is_admin %} (Admin){% endif %} - Joined: {{ member.join_date }}</option>
+                        {% endfor %}
+                    </select>
+                </section>
+            {% endif %}
+
+            <!-- Code Vault with CS Units -->
+            <section class="notes-vault" id="notes">
+                <h2>Code Vault</h2>
+                <div class="notes-search-bar">
+                    <input type="text" id="notes-search" placeholder="Hunt your code (e.g., Unit 1, HTML)...">
+                    <button class="search-btn" aria-label="Search Notes">🔍</button>
+                </div>
+                <div class="units-container">
+                    {% if units %}
+                        {% for unit in units %}
+                            <div class="unit" data-unit="{{ unit.id }}">
+                                <h3>{{ unit.name }}</h3>
+                                <div class="unit-materials">
+                                    {% for note in unit.notes %}
+                                        <div class="material-item">
+                                            <span class="material-name">{{ note.filename }}</span>
+                                            <a href="{{ url_for('uploaded_file', filename=note.filename) }}" download class="grab-link">Download</a>
+                                        </div>
+                                    {% endfor %}
+                                    <form method="POST" enctype="multipart/form-data" class="upload-form">
+                                        <input type="file" name="note" required>
+                                        <input type="hidden" name="unit_id" value="{{ unit.id }}">
+                                        <button type="submit" class="upload-btn">Upload Note</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No units yet. Create or join a group to get started.</p>
+                    {% endif %}
+                </div>
+                {% if group %}
+                    <div class="timetable-upload">
+                        <form method="POST" enctype="multipart/form-data" class="upload-form">
+                            <input type="file" name="class_timetable" required>
+                            <button type="submit" class="upload-btn">Upload Class Timetable</button>
+                        </form>
+                        <form method="POST" enctype="multipart/form-data" class="upload-form">
+                            <input type="file" name="exam_timetable" required>
+                            <button type="submit" class="upload-btn">Upload Exam Timetable</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </section>
+
+            <!-- Assignment Tracker -->
+            <section class="assignment-tracker" id="assignments">
+                <h2>Deadlines to Dodge</h2>
+                <div class="assignment-list">
+                    {% for assignment in assignments %}
+                        <div class="assignment-item" data-due="{{ assignment.due_date }}">
+                            <h3>{{ assignment.topic }}</h3>
+                            <p class="days-left">{{ assignment.remark }}</p>
+                            <span class="posted-date">Due: {{ assignment.due_date }} | Posted: {{ assignment.posted_date }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if is_admin and group %}
+                    <form method="POST" class="assignment-form">
+                        <input type="text" name="assignment_topic" placeholder="Main Topic" required>
+                        <input type="text" name="assignment_remark" placeholder="Remark" required>
+                        <input type="text" name="assignment_due_date" placeholder="Due Date (dd/mm/yyyy)" required>
+                        <button type="submit" class="upload-btn">Post Assignment</button>
+                    </form>
+                {% endif %}
+            </section>
+        </main>
+
+        <!-- Notice Board -->
+        <aside class="notice-board" id="notices">
+            <h2>Chaos Broadcast</h2>
+            <div class="notice-feed">
+                {% for notice in notices %}
+                    <article class="notice-item">
+                        <h3>{{ notice.topic }}</h3>
+                        <p>{{ notice.remark }}</p>
+                        <span class="notice-stamp">Posted: {{ notice.posted_date }}</span>
+                    </article>
+                {% endfor %}
+            </div>
+            {% if group %}
+                <form method="POST" class="notice-form">
+                    <input type="text" name="notice_topic" placeholder="Main Topic" required>
+                    <input type="text" name="notice_remark" placeholder="Remark" required>
+                    <button type="submit" class="upload-btn">Post Notice</button>
+                </form>
+            {% endif %}
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
