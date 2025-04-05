@@ -15,3 +15,6 @@ psycopg2-binary==2.9.10  # PostgreSQL adapter
 
 # Production server for Render
 gunicorn==23.0.0
+
+# Socket.IO for real-time chat
+flask-socketio==5.3.6
