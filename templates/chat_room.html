@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ notice.topic }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat_room.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ notice.topic }}</h1>
+        <div id="chat">
+            {% for message in messages %}
+                <div class="message">{{ message.content }} ({{ message.posted_date }})</div>
+            {% endfor %}
+        </div>
+        <div class="input-group">
+            <input type="text" id="message" placeholder="Type your message">
+        </div>
+        <div class="button-group">
+            <button onclick="sendMessage()" id="sendBtn">Send</button>
+            <a href="{{ url_for('index') }}">Back</a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        const socket = io();
+        const room = "{{ notice_id }}";
+
+        socket.on('connect', () => {
+            socket.emit('join', { room: room });
+        });
+
+        socket.on('message', (data) => {
+            if (data.room === room) {
+                const chat = document.getElementById('chat');
+                const msg = document.createElement('div');
+                msg.className = 'message';
+                msg.textContent = data.msg;
+                chat.appendChild(msg);
+                chat.scrollTop = chat.scrollHeight;
+            }
+        });
+
+        function sendMessage() {
+            const msg = document.getElementById('message').value.trim();
+            if (msg) {
+                socket.emit('message', { room: room, msg: msg });
+                document.getElementById('message').value = '';
+            }
+        }
+
+        document.getElementById('message').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

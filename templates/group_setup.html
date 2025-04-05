@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Setup - {{ group.group_name }}</title>
+    <title>Group Setup - Chaos Hub</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/group_setup.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>{{ group.group_name }}</h1>
-        <div class="card">
-            <h2>Group Key</h2>
-            <p><strong>{{ group.group_key }}</strong></p>
-            <p>Share this with your crew.</p>
-        </div>
+        <h1>Chaos Hub</h1>
         <h2>Add Units</h2>
         <form method="POST" id="unit-form">
             <div id="unit-inputs">
