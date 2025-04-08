@@ -333,8 +333,8 @@ p {
 }
 
 .grab-link {
-    font-size: 14px;
-    padding: 5px 10px;
+    font-size: .8rem;
+    padding: 2px 8px;
     background: var(--button-bg);
     color: var(--button-text);
     border-radius: 5px;
@@ -532,7 +532,10 @@ p {
     }
 
     .unit {
-        height: 350px; /* Adjusted for mobile */
+        height: 230px; /* Adjusted for mobile */
+        width: 210px;
+        font-size: .8rem;
+
     }
 
     .assignment-list {
@@ -542,5 +545,13 @@ p {
     .tab-buttons {
         flex-direction: column;
         gap: 5px;
+    }
+    
+    .grab-link {
+        font-size: .8rem;
+        padding: 2px 8px;
+        background: var(--button-bg);
+        color: var(--button-text);
+        border-radius: .3rem;
     }
 }

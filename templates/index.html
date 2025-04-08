@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS/24 Chaos Hub</title>
+    <title>IF/24 NexusHub</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-brand">
-            <h1>CS/24 Chaos Hub</h1>
+            <h1>IF/24 NexusHub</h1>
             <span class="tagline">Code or Crash</span>
         </div>
         <div class="nav-toggle">
@@ -24,6 +24,7 @@
             <li><a href="#assignments" class="nav-link" data-section="assignments">Deadlines</a></li>
             <li><a href="#notices" class="nav-link" data-section="notices">Notices</a></li>
             <li><a href="{{ url_for('group_setup') }}" class="nav-link">Add Units</a></li>
+            <li><a href="{{ url_for('ai_chat') }}">AI Chat</a></li>
             <li><button class="theme-switcher" aria-label="Toggle Theme">🌓</button></li>
         </ul>
     </nav>
@@ -42,10 +43,10 @@
                     <div class="tab-content active" id="links">
                         <ul>
                             <li><a href="{{ url_for('group_setup') }}" class="create-group">Add Units</a></li>
-                            <li><a href="https://uni-portal.com" target="_blank">Portal</a></li>
-                            <li><a href="https://library.uni.com" target="_blank">Library</a></li>
+                            <li><a href="https://portal.mu.ac.ke" target="_blank">Portal</a></li>
+                            <li><a href="https://elibrarymu.remotexs.co/" target="_blank">Library</a></li>
                             <li><a href="https://email.uni.com" target="_blank">Email</a></li>
-                            <li><a href="https://support.uni.com" target="_blank">SOS Tech</a></li>
+                            <li><a href="https://chat.whatsapp.com/Kt3tKW6ofGw2rNPb9d5Zys" target="_blank">SOS Tech</a></li>
                         </ul>
                     </div>
                     <div class="tab-content" id="timetables">
@@ -84,7 +85,7 @@
                         <div class="meter-fill" style="width: {{ chaos_percent }}%; background: {{ chaos_color }};"></div>
                     </div>
                 </div>
-                <p class="daily-battle-cry">"Debug or die, you CS warrior."</p>
+                <p class="daily-battle-cry">"Simply the best 💥"</p>
             </header>
 
             <!-- Code Vault -->
@@ -102,7 +103,7 @@
                                 {% for note in unit.notes %}
                                     <div class="material-item">
                                         <span class="material-name">{{ note.filename }}</span>
-                                        <a href="{{ url_for('uploaded_file', filename=note.filename) }}" download class="grab-link">Download</a>
+                                        <a href="{{ url_for('uploaded_file', filename=note.filename) }}" download class="grab-link">Save</a>
                                     </div>
                                 {% endfor %}
                                 <form method="POST" enctype="multipart/form-data" class="upload-form">

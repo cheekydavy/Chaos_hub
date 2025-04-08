@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Matrix AI Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ai_chat.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Nexus Matrix AI Chat</h1>
+        <div class="theme-switcher">🌓</div>
+        <div id="dialogue-box"></div>
+        <form id="chat-form" method="POST" enctype="multipart/form-data">
+            <div class="input-group">
+                <input type="text" id="question" name="question" placeholder="Ask about school, books, or upload a timetable...">
+                <input type="file" id="file" name="file" accept=".xlsx,.csv,.docx">
+            </div>
+            <div class="button-group">
+                <button type="submit">Send</button>
+                <a href="{{ url_for('index') }}">Back to Home</a>
+            </div>
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

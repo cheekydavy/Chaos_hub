@@ -1,48 +1,48 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Theme Toggle Setup
     const themeSwitcher = document.querySelector('.theme-switcher');
     const body = document.body;
 
-    // Set dark mode as default if no theme saved
     if (!localStorage.getItem('theme')) {
         body.classList.add('dark-theme');
-        themeSwitcher.textContent = '🌓'; // Sun for light mode
+        themeSwitcher.textContent = '🌓';
         localStorage.setItem('theme', 'dark');
     } else if (localStorage.getItem('theme') === 'light') {
         body.classList.remove('dark-theme');
-        themeSwitcher.textContent = '🌙'; // Moon for dark mode
+        themeSwitcher.textContent = '🌙';
     } else {
         body.classList.add('dark-theme');
-        themeSwitcher.textContent = '🌓'; // Sun for light mode
+        themeSwitcher.textContent = '🌓';
     }
 
-    // Toggle theme on click
     themeSwitcher.addEventListener('click', () => {
         if (body.classList.contains('dark-theme')) {
             body.classList.remove('dark-theme');
-            themeSwitcher.textContent = '🌙'; // Moon for dark mode
+            themeSwitcher.textContent = '🌙';
             localStorage.setItem('theme', 'light');
         } else {
             body.classList.add('dark-theme');
-            themeSwitcher.textContent = '🌓'; // Sun for light mode
+            themeSwitcher.textContent = '🌓';
             localStorage.setItem('theme', 'dark');
         }
     });
 
-    // Navbar Toggle
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');
 
-    navToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-        navToggle.classList.toggle('open');
-    });
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            navToggle.classList.toggle('open');
+        });
+    }
 
-    // Notes Search
     const searchInput = document.querySelector('#notes-search');
     const searchBtn = document.querySelector('.search-btn');
-    searchInput.addEventListener('input', filterNotes);
-    searchBtn.addEventListener('click', filterNotes);
+
+    if (searchInput && searchBtn) {
+        searchInput.addEventListener('input', filterNotes);
+        searchBtn.addEventListener('click', filterNotes);
+    }
 
     function filterNotes() {
         const query = searchInput.value.toLowerCase();
@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Countdown Timers
     document.querySelectorAll('.countdown').forEach(span => {
         const dueDate = span.dataset.due;
         const due = new Date(dueDate.split('/').reverse().join('-'));
@@ -75,21 +74,80 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         updateCountdown();
-        setInterval(updateCountdown, 60000); // Update every minute
+        setInterval(updateCountdown, 60000);
     });
 
-    // Chaos Meter (Tied to Assignments)
     const chaosScore = document.querySelector('.chaos-score');
     const meterFill = document.querySelector('.meter-fill');
-    function updateChaosMeter() {
-        const count = document.querySelectorAll('.assignment-item').length;
-        const percent = count <= 5 ? count * 20 : 100;
-        const tag = count <= 1 ? 'Calm' : count === 2 ? 'Stirring' : count === 4 ? 'Frenzy' : 'Chaos';
-        const color = count <= 1 ? '#00FF7F' : count === 2 ? '#FFFF00' : count === 4 ? '#FFA500' : '#FF4444';
-        chaosScore.textContent = tag;
-        chaosScore.style.color = color;
-        meterFill.style.width = `${percent}%`;
-        meterFill.style.background = color;
+
+    if (chaosScore && meterFill) {
+        function updateChaosMeter() {
+            const count = document.querySelectorAll('.assignment-item').length;
+            const percent = count <= 5 ? count * 20 : 100;
+            const tag = count <= 1 ? 'Calm' : count === 2 ? 'Stirring' : count === 4 ? 'Frenzy' : 'Chaos';
+            const color = count <= 1 ? '#00FF7F' : count === 2 ? '#FFFF00' : count === 4 ? '#FFA500' : '#FF4444';
+            chaosScore.textContent = tag;
+            chaosScore.style.color = color;
+            meterFill.style.width = `${percent}%`;
+            meterFill.style.background = color;
+        }
+        updateChaosMeter();
     }
-    updateChaosMeter(); // Initial call
+
+    const socket = io.connect('http://127.0.0.1:5000', { transports: ['polling'] });
+    const dialogueBox = document.getElementById('dialogue-box');
+    const form = document.querySelector('form');
+    const questionInput = document.getElementById('question');
+    const fileInput = document.getElementById('file');
+
+    if (dialogueBox && form && questionInput && fileInput) {
+        socket.on('connect', () => {
+            console.log('Connected to Socket.IO');
+        });
+
+        socket.on('ai_response', (data) => {
+            console.log('AI Response:', data.msg);
+            const message = document.createElement('p');
+            message.innerHTML = `<strong>AI:</strong> ${data.msg}`;
+            dialogueBox.appendChild(message);
+            dialogueBox.scrollTop = dialogueBox.scrollHeight;
+        });
+
+        socket.on('error', (err) => {
+            console.error('Socket.IO Error:', err);
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const question = questionInput.value.trim();
+            const file = fileInput.files[0];
+
+            if (question && !file) {
+                const userMessage = document.createElement('p');
+                userMessage.textContent = `You: ${question}`;
+                dialogueBox.appendChild(userMessage);
+                dialogueBox.scrollTop = dialogueBox.scrollHeight;
+                socket.emit('ai_message', {'msg': question});
+                questionInput.value = '';
+            } else if (file || (question && file)) {
+                const formData = new FormData(form);
+                fetch('/ai_chat', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(() => {
+                    const userMessage = document.createElement('p');
+                    userMessage.textContent = `You: ${question || 'File upload'}`;
+                    dialogueBox.appendChild(userMessage);
+                    dialogueBox.scrollTop = dialogueBox.scrollHeight;
+                    questionInput.value = '';
+                    fileInput.value = '';
+                })
+                .catch(err => console.error('Fetch error:', err));
+            }
+        });
+    } else {
+        console.error('Chat elements not found—check ai_chat.html');
+    }
 });
