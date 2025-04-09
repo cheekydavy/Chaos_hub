@@ -11,13 +11,13 @@ import logging
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-fuckin-key')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///nexus_matrix.db').replace('postgres://', 'postgresql://')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///:memory:').replace('postgres://', 'postgresql://')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
 
 db = SQLAlchemy(app)
-socketio = SocketIO(app, cors_allowed_origins=['http://localhost:5000', 'http://127.0.0.1:5000'])
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')  # Replace!
+socketio = SocketIO(app, cors_allowed_origins='*')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'your-real-key-here')
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent"
 
 logging.basicConfig(level=logging.DEBUG)
@@ -109,6 +109,10 @@ def simplify_timetable(df, original_filename, year, semester, course):
     output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
     doc.save(output_path)
     return output_filename
+
+@app.route('/test')
+def test():
+    return "Fuck yeah, it’s alive!"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
