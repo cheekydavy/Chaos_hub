@@ -17,7 +17,7 @@ app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
 
 db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins=['http://localhost:5000', 'http://127.0.0.1:5000'])
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'AIzaSyB4CGLzAqNfi2XBRY5DcArjSV7V-_-Irto')  # Replace!
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')  # Replace!
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent"
 
 logging.basicConfig(level=logging.DEBUG)
