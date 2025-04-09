@@ -23,6 +23,10 @@ GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# Log env vars at startup
+logger.debug(f"Env GEMINI_API_KEY: {os.environ.get('GEMINI_API_KEY')}")
+logger.debug(f"Loaded GEMINI_API_KEY: {GEMINI_API_KEY[:5]}...")
+
 upload_folder = app.config['UPLOAD_FOLDER']
 if not os.path.exists(upload_folder):
     os.makedirs(upload_folder)
@@ -80,7 +84,7 @@ def get_ai_response(question):
         "contents": [{"parts": [{"text": f"You are a knowledgeable AI assistant for a school. Answer fully and clearly with relevant details. Use this context if relevant:\n{context}\n\nQuestion: {question}"}]}],
         "generationConfig": {"maxOutputTokens": 500}
     }
-    logger.debug(f"Sending to Gemini: {payload['contents'][0]['parts'][0]['text']}")
+    logger.debug(f"Sending to Gemini with key: {GEMINI_API_KEY[:5]}...")
     try:
         response = requests.post(f"{GEMINI_API_URL}?key={GEMINI_API_KEY}", headers=headers, json=payload)
         response.raise_for_status()
@@ -112,10 +116,12 @@ def simplify_timetable(df, original_filename, year, semester, course):
 
 @app.route('/test')
 def test():
+    logger.debug("Hit /test route")
     return "Fuck yeah, it’s alive!"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    logger.debug("Hit / route")
     units = Unit.query.all()
     class_timetable = File.query.filter_by(type='class_timetable').first()
     exam_timetable = File.query.filter_by(type='exam_timetable').first()
@@ -182,6 +188,7 @@ def index():
 
 @app.route('/chat_room/<int:notice_id>', methods=['GET', 'POST'])
 def chat_room(notice_id):
+    logger.debug(f"Hit /chat_room/{notice_id}")
     notice = Notice.query.get_or_404(notice_id)
     if request.method == 'POST':
         content = request.form['message']
@@ -195,6 +202,7 @@ def chat_room(notice_id):
 
 @app.route('/group_setup', methods=['GET', 'POST'])
 def group_setup():
+    logger.debug("Hit /group_setup")
     if request.method == 'POST':
         units = request.form.getlist('units[]')
         for unit_name in units:
@@ -206,6 +214,7 @@ def group_setup():
 
 @app.route('/ai_chat', methods=['GET', 'POST'])
 def ai_chat():
+    logger.debug("Hit /ai_chat")
     if request.method == 'POST':
         question = request.form.get('question')
         file = request.files.get('file')
@@ -282,10 +291,12 @@ def ai_chat():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
+    logger.debug(f"Serving uploaded file: {filename}")
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/downloads/<filename>')
 def download_file(filename):
+    logger.debug(f"Serving download file: {filename}")
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
 
 @socketio.on('connect')
@@ -296,18 +307,21 @@ def handle_connect():
 @socketio.on('join')
 def on_join(data):
     room = request.args.get('notice_id')
+    logger.debug(f"Client joining room: {room}")
     join_room(room)
     emit('joined', {'room': room}, room=room)
 
 @socketio.on('leave')
 def on_leave(data):
     room = data['room']
+    logger.debug(f"Client leaving room: {room}")
     leave_room(room)
 
 @socketio.on('message')
 def handle_message(data):
     room = data['room']
     msg = data['msg']
+    logger.debug(f"Message in room {room}: {msg}")
     emit('message', {'room': room, 'msg': msg}, room=room)
 
 @socketio.on('ai_message')
@@ -321,4 +335,6 @@ def handle_ai_message(data):
     chat_history.append(f"AI: {response}")
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    logger.debug(f"Running on port {port}")
+    socketio.run(app, host='0.0.0.0', port=port, debug=True)
