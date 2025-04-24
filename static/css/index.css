@@ -106,6 +106,7 @@ p {
     padding: 0;
     display: flex;
     align-items: center;
+    
 }
 
 .nav-menu li {
@@ -122,6 +123,7 @@ p {
     border: none;
     color: var(--text-color);
     padding: 5px 10px;
+    margin-left: 10px;
     cursor: pointer;
     font-size: 18px;
     border-radius: 5px;
@@ -495,9 +497,19 @@ p {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    body {
+        font-family: 'Arial', sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        margin: 0rem;
+        padding: 0rem;
+        line-height: 1.5;
+        transition: background 0.3s, color 0.3s;
+    }
+    
     .navbar {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: column-reverse;
+        align-items: flex-start;  
     }
 
     .nav-toggle {
@@ -512,34 +524,19 @@ p {
     }
 
     .nav-menu.active {
-        display: flex;
+        display: inline-block;
     }
 
     .nav-menu li {
-        margin: 10px 0;
+        margin: 10px 1px;
     }
 
     .container {
         flex-direction: column;
     }
 
-    .sidebar, .main-content, .notice-board {
+    .sidebar, .main-content {
         width: 100%;
-    }
-
-    .units-container {
-        grid-template-columns: 1fr;
-    }
-
-    .unit {
-        height: 230px; /* Adjusted for mobile */
-        width: 210px;
-        font-size: .8rem;
-
-    }
-
-    .assignment-list {
-        grid-template-columns: 1fr;
     }
 
     .tab-buttons {

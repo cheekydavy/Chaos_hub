@@ -10,7 +10,7 @@ import requests
 import logging
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-fuckin-key')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///:memory:').replace('postgres://', 'postgresql://')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
@@ -92,11 +92,11 @@ def get_ai_response(question):
         logger.debug(f"Gemini says: {answer}")
         return answer
     except requests.exceptions.HTTPError as e:
-        logger.error(f"Gemini fucked up with status {e.response.status_code}: {e.response.text}")
-        return f"Gemini fucked up with status {e.response.status_code}: {e.response.text}"
+        logger.error(f"Gemini failed with status {e.response.status_code}: {e.response.text}")
+        return f"Gemini failed with status {e.response.status_code}: {e.response.text}"
     except Exception as e:
-        logger.error(f"Gemini fucked up: {str(e)}")
-        return f"Gemini fucked up: {str(e)}"
+        logger.error(f"Gemini failed: {str(e)}")
+        return f"Gemini failed: {str(e)}"
 
 def simplify_timetable(df, original_filename, year, semester, course):
     doc = Document()
@@ -117,7 +117,7 @@ def simplify_timetable(df, original_filename, year, semester, course):
 @app.route('/test')
 def test():
     logger.debug("Hit /test route")
-    return "Fuck yeah, it’s alive!"
+    return "We're live!"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

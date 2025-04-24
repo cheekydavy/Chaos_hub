@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateChaosMeter() {
             const count = document.querySelectorAll('.assignment-item').length;
             const percent = count <= 5 ? count * 20 : 100;
-            const tag = count <= 1 ? 'Calm' : count === 2 ? 'Stirring' : count === 4 ? 'Frenzy' : 'Chaos';
+            const tag = count <= 1 ? 'Calm' : count === 2 ? 'Not-Bad' : count === 4 ? 'Stirring' : 'Chaos';
             const color = count <= 1 ? '#00FF7F' : count === 2 ? '#FFFF00' : count === 4 ? '#FFA500' : '#FF4444';
             chaosScore.textContent = tag;
             chaosScore.style.color = color;

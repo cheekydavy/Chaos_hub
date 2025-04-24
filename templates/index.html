@@ -11,7 +11,7 @@
     <nav class="navbar">
         <div class="navbar-brand">
             <h1>IF/24 NexusHub</h1>
-            <span class="tagline">Code or Crash</span>
+            <span class="tagline">Simply the best 💥</span>
         </div>
         <div class="nav-toggle">
             <span></span>
@@ -20,11 +20,11 @@
         </div>
         <ul class="nav-menu">
             <li><a href="{{ url_for('index') }}" class="nav-link" data-section="home">Home</a></li>
-            <li><a href="#notes" class="nav-link" data-section="notes">Code Vault</a></li>
+            <li><a href="#notes" class="nav-link" data-section="notes">Vault</a></li>
             <li><a href="#assignments" class="nav-link" data-section="assignments">Deadlines</a></li>
             <li><a href="#notices" class="nav-link" data-section="notices">Notices</a></li>
             <li><a href="{{ url_for('group_setup') }}" class="nav-link">Add Units</a></li>
-            <li><a href="{{ url_for('ai_chat') }}">AI Chat</a></li>
+            <li><a href="{{ url_for('ai_chat') }}" class="nav-link">AI Chat</a></li>
             <li><button class="theme-switcher" aria-label="Toggle Theme">🌓</button></li>
         </ul>
     </nav>
@@ -85,12 +85,12 @@
                         <div class="meter-fill" style="width: {{ chaos_percent }}%; background: {{ chaos_color }};"></div>
                     </div>
                 </div>
-                <p class="daily-battle-cry">"Simply the best 💥"</p>
+                <p class="daily-battle-cry">"Debug or crash"</p>
             </header>
 
             <!-- Code Vault -->
             <section class="notes-vault" id="notes">
-                <h2>Code Vault</h2>
+                <h2>Vault</h2>
                 <div class="notes-search-bar">
                     <input type="text" id="notes-search" placeholder="Hunt your code (e.g., Unit 1, HTML)...">
                     <button class="search-btn" aria-label="Search Notes">🔍</button>
