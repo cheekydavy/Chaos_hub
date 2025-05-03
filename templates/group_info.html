@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Info</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/group_info.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ admin.group_name }}</h1>
+        <div class="card">
+            <h2>Group Key</h2>
+            <p><strong>{{ admin.group_key }}</strong></p>
+            <p>Share this with your crew.</p>
+        </div>
+        <p><a href="{{ url_for('join') }}">Join Now</a> | <a href="{{ url_for('index') }}">Back</a></p>
+    </div>
+</body>
+</html>

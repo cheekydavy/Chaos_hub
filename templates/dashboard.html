@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ admin.group_name }} Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ admin.group_name }}</h1>
+        <div class="card">
+            <h2>Admin</h2>
+            <p>{{ admin.username }} | {{ admin.contact }}</p>
+        </div>
+
+        <div class="card">
+            <h2>Add Unit</h2>
+            <form method="POST">
+                <input type="text" name="unit_name" placeholder="Unit Name" required>
+                <button type="submit">Add</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Timetable</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="timetable" required>
+                <button type="submit">Upload</button>
+            </form>
+            {% if timetable %}
+                <p><a href="{{ url_for('uploaded_file', filename=timetable.filename) }}">{{ timetable.filename }}</a></p>
+            {% else %}
+                <p>No timetable yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Units & Notes</h2>
+            <ul class="unit-list">
+                {% for unit in units %}
+                    <li>
+                        <h3>{{ unit.name }}</h3>
+                        <form method="POST" enctype="multipart/form-data">
+                            <input type="file" name="note" required>
+                            <input type="hidden" name="unit_id" value="{{ unit.id }}">
+                            <button type="submit">Upload Note</button>
+                        </form>
+                        <ul class="file-list">
+                            {% for note in notes if note.unit_id == unit.id %}
+                                <li><a href="{{ url_for('uploaded_file', filename=note.filename) }}">{{ note.filename }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% else %}
+                    <li>No units added yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <p><a href="{{ url_for('index') }}">Back</a></p>
+    </div>
+</body>
+</html>
