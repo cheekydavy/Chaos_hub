@@ -17,7 +17,7 @@ app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
 
 db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'AIzaSyB4CGLzAqNfi2XBRY5DcArjSV7V-_-Irto')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'your-real-key-here')
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent"
 
 logging.basicConfig(level=logging.DEBUG)
@@ -81,7 +81,7 @@ def get_ai_response(question):
     headers = {"Content-Type": "application/json"}
     context = "\n".join(chat_history[-4:])
     payload = {
-        "contents": [{"parts": [{"text": f"You are a knowledgeable AI assistant for a class. Answer fully and clearly with relevant details. Use this context if relevant:\n{context}\n\nQuestion: {question}"}]}],
+        "contents": [{"parts": [{"text": f"You are a knowledgeable AI assistant for a school. Answer fully and clearly with relevant details. Use this context if relevant:\n{context}\n\nQuestion: {question}"}]}],
         "generationConfig": {"maxOutputTokens": 500}
     }
     logger.debug(f"Sending to Gemini with key: {GEMINI_API_KEY[:5]}...")
