@@ -26,7 +26,7 @@ import urllib.parse
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-fuckin-key')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///nexushub.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'Uploads')
@@ -35,22 +35,14 @@ app.config['SESSION_COOKIE_SECURE'] = False  # Disabled for local testing
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB file size limit
-app.config['RATELIMIT_DEFAULT'] = "200/day;50/hour"
-app.config['RATELIMIT_STORAGE_URI'] = "memory://"
-app.config['TELEGRAM_BOT_TOKEN'] = os.environ.get('TELEGRAM_BOT_TOKEN', '7643200755:AAEnY79hQQ98ovHCmOp-IOcscwvDGqUbEMM')
-app.config['TELEGRAM_CHAT_ID'] = os.environ.get('TELEGRAM_CHAT_ID', '6214817938')
-app.config['NEWS_API_KEY'] = os.environ.get('NEWS_API_KEY', '140695dbcf9a4c90aceec0b5d3b1155b')
-app.config['UNIT_DELETE_SECRET_KEY'] = os.environ.get('UNIT_DELETE_SECRET_KEY', 'sierra')
+app.config['TELEGRAM_BOT_TOKEN'] = os.environ.get('TELEGRAM_BOT_TOKEN', 'token')
+app.config['TELEGRAM_CHAT_ID'] = os.environ.get('TELEGRAM_CHAT_ID', 'Id')
+app.config['NEWS_API_KEY'] = os.environ.get('NEWS_API_KEY', 'api')
+app.config['UNIT_DELETE_SECRET_KEY'] = os.environ.get('UNIT_DELETE_SECRET_KEY', 'key')
 app.config['ACTIVATION_LINK'] = os.environ.get('ACTIVATION_LINK', 'irm https://get.activated.win | iex')
 
 db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins=['http://localhost:5100', 'http://127.0.0.1:5100', 'http://0.0.0.0:5100'])
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["200/day", "50/hour"],
-    storage_uri=""
-)
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
@@ -345,113 +337,6 @@ def send_telegram():
         return redirect(url_for('index', _anchor='links'))
     return render_template('telegram_message.html', form=form)
 
-@app.route('/send_link_to_telegram', methods=['POST'])
-@limiter.limit("50 per minute")
-def send_link_to_telegram():
-    logger.info("Hit /send_link_to_telegram")
-    try:
-        form = TelegramLinkForm()
-        if form.validate_on_submit():
-            link = sanitize_input(form.link.data)
-            if not link.startswith(('http://', 'https://')):
-                flash('Invalid link provided', 'error')
-                logger.warning(f"Invalid link: {link}")
-                return redirect(url_for('ai_chat'))
-            
-            bot_token = app.config['TELEGRAM_BOT_TOKEN']
-            chat_id = app.config['TELEGRAM_CHAT_ID']
-            telegram_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-            message = f"Here is your link: {link}"
-            reply_markup = {
-                'inline_keyboard': [[
-                    {'text': 'Open Link', 'url': link}
-                ]]
-            }
-            payload = {
-                'chat_id': chat_id,
-                'text': message,
-                'reply_markup': reply_markup
-            }
-            response = requests.post(telegram_url, json=payload, timeout=10)
-            if response.status_code == 200:
-                flash('Link sent to Telegram successfully', 'success')
-            else:
-                error_msg = response.json().get('description', 'Unknown error')
-                flash(f'Telegram error: {error_msg}', 'error')
-                logger.error(f"Telegram API error: {response.text}")
-        else:
-            flash('Invalid form data', 'error')
-            logger.warning("Invalid form data in /send_link_to_telegram")
-        return redirect(url_for('ai_chat'))
-    except Exception as e:
-        flash(f'Error sending link: {str(e)}', 'error')
-        logger.error(f"Error in /send_link_to_telegram: {str(e)}")
-        return redirect(url_for('ai_chat'))
-
-@app.route('/telegram_webhook', methods=['POST'])
-@limiter.limit("100 per minute")
-def telegram_webhook():
-    logger.info("Hit /telegram_webhook")
-    try:
-        update = request.get_json()
-        if not update or 'message' not in update:
-            logger.warning("Invalid Telegram update received")
-            return '', 400
-
-        chat_id = update['message']['chat']['id']
-        text = update['message'].get('text', '').strip()
-
-        # Handle commands and deep link parameters
-        message = None
-        reply_markup = None
-        if text.lower().startswith(('/start', '/start@svjeff_bot')):
-            parts = text.split(maxsplit=1)
-            if len(parts) > 1:
-                parameter = parts[1].strip()
-                if parameter.lower() == 'activation':
-                    message = f"Here is the Windows & Office activation link: {app.config['ACTIVATION_LINK']}"
-                else:
-                    # Decode the parameter, assuming it might be a URL
-                    try:
-                        decoded_link = urllib.parse.unquote(parameter)
-                        # Basic validation to check if it’s a URL
-                        if decoded_link.startswith(('http://', 'https://')):
-                            message = f"Here is your link: {decoded_link}"
-                            # Add an inline button to open the link
-                            reply_markup = {
-                                'inline_keyboard': [[
-                                    {'text': 'Open Link', 'url': decoded_link}
-                                ]]
-                            }
-                        else:
-                            message = f"Invalid link provided: {decoded_link}"
-                    except Exception as e:
-                        logger.error(f"Error decoding link parameter: {str(e)}")
-                        message = "Error processing the link. Please try again."
-            else:
-                message = "Welcome to svjeff Bot! Use /activation to get the Windows & Office activation link or click a link like https://t.me/svjeff?start=https%3A%2F%2Fexample.com"
-        elif text.lower() in ['/activation', '/activation@svjeff_bot']:
-            message = f"Here is the Windows & Office activation link: {app.config['ACTIVATION_LINK']}"
-        else:
-            message = "Unknown command. Use /activation to get the activation link."
-
-        telegram_url = f"https://api.telegram.org/bot{app.config['TELEGRAM_BOT_TOKEN']}/sendMessage"
-        payload = {
-            'chat_id': chat_id,
-            'text': message
-        }
-        if reply_markup:
-            payload['reply_markup'] = reply_markup
-
-        response = requests.post(telegram_url, json=payload, timeout=10)
-        if response.status_code != 200:
-            logger.error(f"Failed to send Telegram message: {response.text}")
-            return '', 500
-        return '', 200
-    except Exception as e:
-        logger.error(f"Error in telegram_webhook: {str(e)}")
-        return '', 500
-
 @app.route('/ai_chat', methods=['GET'])
 def ai_chat():
     logger.info("Hit /ai_chat")
@@ -525,80 +410,6 @@ def group_setup():
             logger.error(f"Error in /group_setup: {str(e)}")
     return render_template('group_setup.html')
 
-@app.route('/admin/login', methods=['GET', 'POST'])
-@limiter.limit("10 per minute")
-def admin_login():
-    logger.info("Hit /admin/login")
-    form = AdminLoginForm()
-    if form.validate_on_submit():
-        try:
-            username = sanitize_input(form.username.data)
-            password = form.password.data
-            admin = Admin.query.filter_by(username=username).first()
-            if admin and bcrypt.checkpw(password.encode('utf-8'), admin.password_hash):
-                session['admin_id'] = admin.id
-                logger.info(f"Admin {username} logged in")
-                flash('Successfully logged in', 'success')
-                return redirect(url_for('admin_dashboard'))
-            else:
-                flash('Invalid credentials', 'error')
-                logger.warning(f"Failed login attempt for {username}")
-        except Exception as e:
-            logger.error(f"Error in admin login: {str(e)}")
-            flash('Login error, try again later', 'error')
-    return render_template('admin_login.html', form=form)
-
-@app.route('/admin/dashboard', methods=['GET', 'POST'])
-def admin_dashboard():
-    logger.info("Hit /admin/dashboard")
-    if 'admin_id' not in session:
-        flash('Please log in', 'error')
-        return redirect(url_for('admin_login'))
-
-    try:
-        if request.method == 'POST':
-            if 'unit_name' in request.form:
-                name = sanitize_input(request.form.get('unit_name', ''))
-                lecturer = sanitize_input(request.form.get('lecturer', '')) or None
-                phone = sanitize_input(request.form.get('phone', '')) or None
-                email = sanitize_input(request.form.get('email', '')) or None
-                if name:
-                    if not validate_phone(phone):
-                        flash('Invalid phone number', 'error')
-                    elif not validate_email(email):
-                        flash('Invalid email', 'error')
-                    else:
-                        unit = Unit(name=name, lecturer=lecturer, phone=phone, email=email)
-                        db.session.add(unit)
-                        db.session.commit()
-                        flash('Unit added', 'success')
-                else:
-                    flash('Unit name is required', 'error')
-            elif 'note' in request.files:
-                file = request.files['note']
-                unit_id = sanitize_input(request.form.get('unit_id', ''))
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                    file.save(file_path)
-                    logger.info(f"Saved note file: {file_path}")
-                    note = File(filename=filename, type='note', unit_id=unit_id or None)
-                    db.session.add(note)
-                    db.session.commit()
-                    flash('Note uploaded', 'success')
-                    return redirect(url_for('admin_dashboard', _anchor='notes'))
-                else:
-                    flash('Invalid file type for note. Allowed types: .xlsx, .csv, .docx, .pdf, .xls', 'error')
-                    logger.warning(f"Invalid note file: {file.filename if file else 'None'}")
-            return redirect(url_for('admin_dashboard'))
-
-        units = Unit.query.all()
-        return render_template('admin_dashboard.html', units=units)
-    except Exception as e:
-        db.session.rollback()
-        logger.error(f'Error in admin dashboard: {str(e)}')
-        flash(f'Error: {str(e)}', 'error')
-        return redirect(url_for('admin_dashboard'))
 
 @app.route('/Uploads/<filename>')
 def uploaded_file(filename):
