@@ -3,32 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Setup - Chaos Hub</title>
+    <title>Add Units - NexusHub</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/group_setup.css') }}">
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1><a href="{{ url_for('index') }}" data-section="home">IF/23 NexusHub</a></h1>
+            <span class="tagline">Simply the best 💥</span>
+        </div>
+        <div class="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('index') }}" class="nav-link" data-section="home">Home</a></li>
+            <li><a href="{{ url_for('group_setup') }}" class="nav-link">Add Units</a></li>
+            <li><a href="{{ url_for('ai_chat') }}" class="nav-link">Marketplace</a></li>
+            <li><button class="theme-switcher" aria-label="Toggle Theme">🦆</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
     <div class="container">
-        <h1>Chaos Hub</h1>
-        <h2>Add Units</h2>
-        <form method="POST" id="unit-form">
-            <div id="unit-inputs">
-                <input type="text" name="units[]" placeholder="Unit Name" required>
+        <main class="main-content">
+            <h1>Add Units</h1>
+            <div class="group-setup">
+                <form method="POST" class="group-setup-form">
+                    <div id="units-container">
+                        <fieldset class="unit-fieldset" data-unit-index="0">
+                            <div class="form-group">
+                                <label for="unit-name-0">Unit Name:</label>
+                                <input type="text" id="unit-name-0" name="units[]" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lecturer-name-0">Lecturer:</label>
+                                <input type="text" id="lecturer-name-0" name="lecturers[]">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone-number-0">Phone:</label>
+                                <input type="tel" id="phone-number-0" name="phones[]">
+                            </div>
+                            <div class="form-group">
+                                <label for="email-id-0">Email:</label>
+                                <input type="email" id="email-id-0" name="emails[]">
+                            </div>
+                            <button type="button" class="remove-unit-btn" style="display: none;">Remove Unit</button>
+                        </fieldset>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="add-unit-btn">Add Another Unit</button>
+                        <button type="submit" class="upload-btn">Submit</button>
+                    </div>
+                </form>
+                
             </div>
-            <button type="button" id="add-unit-btn">Add Another Unit</button>
-            <button type="submit">Finish Setup</button>
-        </form>
-        <p><a href="{{ url_for('index') }}">Back</a></p>
+        </main>
     </div>
-    <script>
-        document.getElementById('add-unit-btn').addEventListener('click', () => {
-            const inputDiv = document.getElementById('unit-inputs');
-            const newInput = document.createElement('input');
-            newInput.type = 'text';
-            newInput.name = 'units[]';
-            newInput.placeholder = 'Unit Name';
-            newInput.required = true;
-            inputDiv.appendChild(newInput);
-        });
-    </script>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

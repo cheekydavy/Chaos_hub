@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Telegram Message</title>
+    <link href="{{ url_for('static', filename='css/telegram_message.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1><a href="{{ url_for('index') }}" data-section="home">IF/23 NexusHub</a></h1>
+            <span class="tagline">Simply the best 💥</span>
+        </div>
+        <div class="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('index') }}" class="nav-link" data-section="home">Home</a></li>
+            <li><a href="{{ url_for('group_setup') }}" class="nav-link">Add Units</a></li>
+            <li><a href="{{ url_for('ai_chat') }}" class="nav-link">Marketplace</a></li>
+            <li><button class="theme-switcher" aria-label="Toggle Theme">🦆</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Send a Message</h1>
+        <form method="POST" class="upload-form">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.message.label(class="form-label") }}
+                {{ form.message(rows=5, cols=40, class="form-textarea") }}
+                {% if form.message.errors %}
+                    <p class="error">{{ form.message.errors[0] }}</p>
+                {% endif %}
+            </div>
+            {{ form.submit(class="upload-btn") }}
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

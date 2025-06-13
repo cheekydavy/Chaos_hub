@@ -3,26 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Matrix AI Chat</title>
+    <title>Nexus Hub Resources</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ai_chat.css') }}">
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1><a href="{{ url_for('index') }}" data-section="home">IF/23 NexusHub</a></h1>
+            <span class="tagline">Simply the best 💥</span>
+        </div>
+        <div class="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('index') }}" class="nav-link" data-section="home">Home</a></li>
+            <li><a href="{{ url_for('group_setup') }}" class="nav-link">Add Units</a></li>
+            <li><a href="{{ url_for('ai_chat') }}" class="nav-link">Marketplace</a></li>
+            <li><button class="theme-switcher" aria-label="Toggle Theme">🦆</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
     <div class="container">
-        <h1>Nexus Matrix AI Chat</h1>
-        <div class="theme-switcher">🌓</div>
-        <div id="dialogue-box"></div>
-        <form id="chat-form" method="POST" enctype="multipart/form-data">
-            <div class="input-group">
-                <input type="text" id="question" name="question" placeholder="Ask about school, books, or upload a timetable...">
-                <input type="file" id="file" name="file" accept=".xlsx,.csv,.docx">
-            </div>
-            <div class="button-group">
-                <button type="submit">Send</button>
-                <a href="{{ url_for('index') }}">Back to Home</a>
-            </div>
-        </form>
+        <h1>Nexus Hub Resources</h1>
+        <div id="dialogue-box">
+            <h2>Useful websites</h2>
+            <ul>
+                {% for llm in llm_links %}
+                    <li>
+                        {% if llm.is_website %}
+                            <a href="{{ llm.url }}" target="_blank" class="resource-link">{{ llm.name }}</a>
+                        {% else %}
+                            <span>{{ llm.name }}: {{ llm.url }}</span>
+                            <span class="copy-icon" data-copy-text="{{ llm.url | safe }}" title="Copy to clipboard" role="button" aria-label="Copy {{ llm.name }} to clipboard">📋</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/copy.js') }}"></script>
 </body>
 </html>
