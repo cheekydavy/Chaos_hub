@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for if-project on 2025-06-16T12:11:40+03:00
+# fly.toml app configuration file generated for if-project-late-tree-944 on 2025-06-16T12:25:17+03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'if-project'
+app = 'if-project-late-tree-944'
 primary_region = 'jnb'
 
 [build]
