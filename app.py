@@ -29,9 +29,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///nexushub.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'Uploads')
-app.config['OUTPUT_FOLDER'] = os.environ.get('OUTPUT_FOLDER', 'outputs')
-app.config['SESSION_COOKIE_SECURE'] = False  # Disabled for local testing
+app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'app/Uploads')
+app.config['OUTPUT_FOLDER'] = os.environ.get('OUTPUT_FOLDER', 'app/outputs')
+app.config['SESSION_COOKIE_SECURE'] = True  # Disabled for local testing
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB file size limit
@@ -42,7 +42,7 @@ app.config['UNIT_DELETE_SECRET_KEY'] = os.environ.get('UNIT_DELETE_SECRET_KEY', 
 app.config['ACTIVATION_LINK'] = os.environ.get('ACTIVATION_LINK', 'irm https://get.activated.win | iex')
 
 db = SQLAlchemy(app)
-socketio = SocketIO(app, cors_allowed_origins=['http://localhost:5100', 'http://127.0.0.1:5100', 'http://0.0.0.0:5100'])
+socketio = SocketIO(app, cors_allowed_origins=['http://localhost:5100', 'http://127.0.0.1:5100', 'http://0.0.0.0:5100', 'https://nexus-hub.fly.dev'])
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
@@ -56,7 +56,7 @@ tech_news_cache = []
 def add_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self' http://localhost:5100 https://cdn.socket.io; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:5100 wss://localhost:5100;"
+    response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self' http://localhost:5100 https://cdn.socket.io https://nexus-hub.fly.dev; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:5100 wss://localhost:5100 ws://nexus-hub.fly.dev wss://nexus-hub.fly.dev;"
     return response
 
 # Ensure upload/output folders exist
@@ -184,15 +184,6 @@ with app.app_context():
         db.session.commit()
 
 init_scheduler()
-
-# Set Telegram webhook (run once in production)
-def set_telegram_webhook():
-    webhook_url = os.environ.get('WEBHOOK_URL', 'https://your-public-domain.com/telegram_webhook')
-    telegram_url = f"https://api.telegram.org/bot{app.config['TELEGRAM_BOT_TOKEN']}/setWebhook"
-    payload = {'url': webhook_url}
-    response = requests.post(telegram_url, json=payload, timeout=10)
-    logger.info(f"Webhook setup response: {response.text}")
-    return response.json()
 
 @app.route('/test')
 def test():
@@ -445,9 +436,7 @@ def handle_connect():
     emit('response', {'msg': 'Connected to Nexus Hub'})
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5100))
+    port = int(os.environ.get('PORT', 8080))
     logger.info(f"Running on port {port}")
     fetch_tech_news()  # Initial news fetch
-    if not os.environ.get('FLASK_DEBUG', '0') == '1':  # Set webhook only in production
-        set_telegram_webhook()
     socketio.run(app, host='0.0.0.0', port=port, debug=True)
