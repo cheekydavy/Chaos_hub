@@ -21,9 +21,9 @@ RUN mkdir -p /app/static/Uploads /app/static/outputs \
  && chmod -R 777 /app/static
 
 ENV FLASK_ENV=production \
-    PORT=8000 \
+    PORT=8080 \
     PYTHONUNBUFFERED=1
 
-EXPOSE 8000
+EXPOSE 8080
 
 CMD ["gunicorn", "--worker-class", "eventlet", "--workers", "1", "--bind", "0.0.0.0:8080", "--log-level", "info", "app:app"]
