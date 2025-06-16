@@ -6,7 +6,11 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
-    libpq-dev gcc \
+    libpq-dev \
+    gcc \
+    g++ \
+    build-essential \
+    python3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
